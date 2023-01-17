@@ -15,25 +15,23 @@ enum RCalendarMode {
 
 /// you can use [RCalendarMarker.of(context).notifier] get it.
 class RCalendarController<T> extends ChangeNotifier {
-  RCalendarController.single(
-      {RCalendarMode? mode,
-      DateTime? selectedDate,
-      bool? isAutoSelect,
-      T? initialData})
+  RCalendarController.single({RCalendarMode? mode,
+    DateTime? selectedDate,
+    bool? isAutoSelect,
+    T? initialData})
       : _selectedDates = selectedDate != null
-            ? SplayTreeSet.of([selectedDate])
-            : SplayTreeSet(),
+      ? SplayTreeSet.of([selectedDate])
+      : SplayTreeSet(),
         _isMultiple = false,
         _isDispersion = true,
         _isAutoSelect = isAutoSelect ?? true,
         _data = initialData,
         _mode = mode ?? RCalendarMode.month;
 
-  RCalendarController.multiple(
-      {RCalendarMode? mode,
-      required List<DateTime> selectedDates,
-      bool? isDispersion,
-      T? initialData})
+  RCalendarController.multiple({RCalendarMode? mode,
+    required List<DateTime> selectedDates,
+    bool? isDispersion,
+    T? initialData})
       : _isMultiple = true,
         _isDispersion = isDispersion ?? true,
         _isAutoSelect = false,
@@ -51,6 +49,7 @@ class RCalendarController<T> extends ChangeNotifier {
   PageController? weekController;
 
   late DateTime firstDate;
+
 
   DateTime? lastDate;
 
@@ -100,9 +99,9 @@ class RCalendarController<T> extends ChangeNotifier {
       Duration duration = end.difference(first);
       _selectedDates.clear();
       _selectedDates.addAll(List.generate(
-              duration.inDays, (int index) => first.add(Duration(days: index)))
+          duration.inDays, (int index) => first.add(Duration(days: index)))
           .toList()
-            ..add(end));
+        ..add(end));
     }
     notifyListeners();
   }
@@ -161,20 +160,26 @@ class RCalendarController<T> extends ChangeNotifier {
     this.lastDate = endDate;
     if (isMultiple) {
       // ignore: unnecessary_null_comparison
-      if(_selectedDates == null){
+      if (_selectedDates == null) {
         _selectedDates = SplayTreeSet();
       }
     } else {
       // ignore: unnecessary_null_comparison
-      if(_selectedDates == null){
+      if (_selectedDates == null) {
         _selectedDates = SplayTreeSet.of([
-          DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day)
+          DateTime(DateTime
+              .now()
+              .year, DateTime
+              .now()
+              .month, DateTime
+              .now()
+              .day)
         ]);
       }
     }
     displayedMonthDate = selectedDate ?? DateTime.now();
     final int monthPage =
-        RCalendarUtils.monthDelta(firstDate, displayedMonthDate!);
+    RCalendarUtils.monthDelta(firstDate, displayedMonthDate!);
     monthController = PageController(initialPage: monthPage);
     _localizations = DefaultMaterialLocalizations();
 
@@ -223,7 +228,7 @@ class RCalendarController<T> extends ChangeNotifier {
       }
     } else {
       final int weekPage =
-          RCalendarUtils.weekDelta(firstDate, dateTime!, _localizations);
+      RCalendarUtils.weekDelta(firstDate, dateTime!, _localizations);
       if (weekController != null && weekPage != weekController!.page! ~/ 1) {
         weekController?.jumpToPage(weekPage);
       }
@@ -287,7 +292,7 @@ class RCalendarController<T> extends ChangeNotifier {
               (last!.isAfter(selectedDate) || _selectedDates.length == 1)) {
             Duration duration = first.difference(selectedDate);
             final List<DateTime> addList = List.generate(duration.inDays,
-                (int index) => first!.subtract(Duration(days: index)));
+                    (int index) => first!.subtract(Duration(days: index)));
             addList.add(selectedDate);
             addList.forEach((dateTime) {
               if (!_selectedDates.contains(dateTime)) {
@@ -301,7 +306,8 @@ class RCalendarController<T> extends ChangeNotifier {
                 .difference(_selectedDates.length == 1 ? first : last);
             final List<DateTime> addList = List.generate(
                 duration.inDays,
-                (int index) => _selectedDates.length == 1
+                    (int index) =>
+                _selectedDates.length == 1
                     ? first!.add(Duration(days: index))
                     : last!.add(Duration(days: index)));
             addList.add(selectedDate);
@@ -324,10 +330,20 @@ class RCalendarController<T> extends ChangeNotifier {
     notifyListeners();
     if (!isMonthMode) {
       int weekPage =
-          RCalendarUtils.weekDelta(firstDate, selectedDate, _localizations);
+      RCalendarUtils.weekDelta(firstDate, selectedDate, _localizations);
       updateDisplayedDate(weekPage, mode);
     }
   }
+
+  //更新数据
+  void changeData(DateTime dataTime, List<DateTime> temp) {
+    _selectedDates
+      ..clear()
+      ..addAll(temp)
+      ..add(dataTime);
+    notifyListeners();
+  }
+
 
   //更新display日期
   void updateDisplayedDate(int page, RCalendarMode mode) {
@@ -357,7 +373,7 @@ class RCalendarController<T> extends ChangeNotifier {
               this.selectedDate!.add(Duration(days: isBefore ? 7 : -7));
         }
         int selectDatePage =
-            RCalendarUtils.weekDelta(firstDate, selectedDate!, _localizations);
+        RCalendarUtils.weekDelta(firstDate, selectedDate!, _localizations);
         if (displayedMonthDate!.month != selectedDate!.month &&
             selectDatePage == page) {
           //月份不一样
@@ -376,16 +392,18 @@ class RCalendarController<T> extends ChangeNotifier {
   int get maxMonthPage => RCalendarUtils.monthDelta(firstDate, lastDate!) + 1;
 
   //选中的页数
-  int get selectedPage => isMonthMode
-      ? RCalendarUtils.monthDelta(
+  int get selectedPage =>
+      isMonthMode
+          ? RCalendarUtils.monthDelta(
           firstDate, selectedDate ?? displayedMonthDate!)
-      : RCalendarUtils.weekDelta(
+          : RCalendarUtils.weekDelta(
           firstDate, selectedDate ?? displayedMonthDate!, _localizations);
 
   //当前显示的页面
-  int get displayedPage => isMonthMode
-      ? RCalendarUtils.monthDelta(firstDate, displayedMonthDate!)
-      : RCalendarUtils.weekDelta(
+  int get displayedPage =>
+      isMonthMode
+          ? RCalendarUtils.monthDelta(firstDate, displayedMonthDate!)
+          : RCalendarUtils.weekDelta(
           firstDate, displayedMonthDate!, _localizations);
 
   @override
