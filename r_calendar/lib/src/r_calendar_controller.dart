@@ -344,6 +344,14 @@ class RCalendarController<T> extends ChangeNotifier {
     notifyListeners();
   }
 
+  //更新全部数据
+  void changeAllData(List<DateTime> temp) {
+    _selectedDates
+      ..clear()
+      ..addAll(temp);
+    notifyListeners();
+  }
+
 
   //更新display日期
   void updateDisplayedDate(int page, RCalendarMode mode) {
